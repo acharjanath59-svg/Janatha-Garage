@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Orders | Velocity Motors</title>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Main Design System CSS -->
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* Additional Custom Styles for Dedicated Orders Page */
+        .orders-page-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px 80px;
+        }
+
+        .orders-header-card {
+            background: rgba(15, 23, 42, 0.7);
+            border: 1px solid var(--border-glass);
+            backdrop-filter: blur(16px);
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow-premium);
+        }
+
+        .orders-hero-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 24px;
+        }
+
+        .orders-title-block h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 2.2rem;
+            font-weight: 900;
+            margin: 0 0 6px 0;
+            background: linear-gradient(135deg, #ffffff 0%, #94a3b8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .orders-title-block p {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            margin: 0;
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        .orders-stats-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
+            margin-top: 24px;
+        }
+
+        .stat-box {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-glass);
+            border-radius: 14px;
+            padding: 18px 22px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            background: rgba(255, 102, 0, 0.12);
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            flex-shrink: 0;
+        }
+
+        .stat-val {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: #fff;
+            line-height: 1.2;
+        }
+
+        .stat-lbl {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        /* Controls & Filter Bar */
+        .orders-filter-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .search-box-wrapper {
+            position: relative;
+            flex: 1;
+            min-width: 280px;
+        }
+
+        .search-box-wrapper i {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+        }
+
+        .search-box-wrapper input {
+            width: 100%;
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid var(--border-glass);
+            border-radius: 12px;
+            padding: 12px 16px 12px 44px;
+            color: #fff;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 0.9rem;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .search-box-wrapper input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 12px var(--accent-glow);
+        }
+
+        .action-btns-group {
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn-glass-action {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-glass);
+            color: #fff;
+            padding: 10px 18px;
+            border-radius: 12px;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .btn-glass-action:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: var(--accent);
+            transform: translateY(-2px);
+        }
+
+        .btn-primary-action {
+            background: var(--accent);
+            border: none;
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 12px;
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            box-shadow: 0 4px 16px var(--accent-glow);
+        }
+
+        .btn-primary-action:hover {
+            transform: translateY(-2px);
+            filter: brightness(1.1);
+        }
+
+        /* Order Cards List */
+        .orders-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+            gap: 20px;
+        }
+
+        .order-card {
+            background: rgba(15, 23, 42, 0.75);
+            border: 1px solid var(--border-glass);
+            border-radius: 16px;
+            padding: 22px;
+            backdrop-filter: blur(12px);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .order-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--accent);
+        }
+
+        .order-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+        }
+
+        .order-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 16px;
+            padding-bottom: 14px;
+            border-bottom: 1px solid var(--border-glass);
+        }
+
+        .order-txn-id {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            font-size: 1rem;
+            color: #fff;
+            letter-spacing: 0.05em;
+        }
+
+        .order-date {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 0.76rem;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        .order-status-badge {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 20px;
+            background: rgba(16, 185, 129, 0.15);
+            color: #10b981;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            text-transform: uppercase;
+        }
+
+        .order-customer-info {
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 10px;
+            padding: 12px;
+            margin-bottom: 14px;
+            font-size: 0.82rem;
+            color: var(--text-secondary);
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        .info-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 4px;
+        }
+
+        .info-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .info-row i {
+            color: var(--accent);
+            width: 14px;
+        }
+
+        .order-items-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 18px;
+        }
+
+        .item-pill {
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid var(--border-glass);
+            padding: 4px 10px;
+            border-radius: 8px;
+            font-size: 0.78rem;
+            color: #e2e8f0;
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        .order-card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 14px;
+            border-top: 1px solid var(--border-glass);
+        }
+
+        .order-total-price {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.3rem;
+            font-weight: 900;
+            color: var(--accent);
+        }
+
+        .payment-method-tag {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        /* Empty state */
+        .empty-orders-card {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px dashed var(--border-glass);
+            border-radius: 20px;
+            padding: 60px 20px;
+            text-align: center;
+            grid-column: 1 / -1;
+        }
+
+        .empty-orders-card i {
+            font-size: 3.5rem;
+            color: var(--text-muted);
+            margin-bottom: 16px;
+        }
+
+        .empty-orders-card h3 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.4rem;
+            color: #fff;
+            margin-bottom: 8px;
+        }
+
+        .empty-orders-card p {
+            color: var(--text-secondary);
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 0.9rem;
+            margin-bottom: 24px;
+        }
+    </style>
+</head>
+<body data-theme="ktm">
+
+    <!-- Header Navigation -->
+    <header>
+        <nav class="navbar" id="top-nav">
+            <div class="logo">
+                <a href="index.html" style="text-decoration: none; color: inherit; display: flex; align-items: center;">
+                    <i class="fa fa-bolt" style="color: var(--accent); filter: drop-shadow(0 0 10px var(--accent)); font-size: 1.5rem;"></i>
+                    <span style="font-weight: 900; font-family: 'Outfit'; font-size: 1.9rem; letter-spacing: -0.04em; margin-left: 6px;">VELOCITY</span>
+                </a>
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html#hero-section">Configurator</a></li>
+                <li><a href="index.html#styling-section">Styling Studio</a></li>
+                <li><a href="index.html#test-ride-section">Drag Test Ride</a></li>
+                <li><a href="index.html#parts-section">Spares Shop</a></li>
+                <li><a href="index.html#about-section">About</a></li>
+            </ul>
+            <div class="nav-actions">
+                <!-- Supabase Connection Status Indicator -->
+                <div class="server-status-pill" id="server-status-pill" title="Supabase Connection Status" onclick="openSupabaseSettingsModal()" style="cursor: pointer;">
+                    <span id="server-status-dot" style="width:7px; height:7px; border-radius:50%; background:#475569; display:inline-block; transition: background 0.4s;"></span>
+                    <span id="server-status-text" class="server-status-text">ONLINE</span>
+                </div>
+                <!-- Supabase Config Gear Button -->
+                <button class="cart-icon-btn" id="open-supabase-settings-btn" onclick="openSupabaseSettingsModal()" title="Supabase Settings (URL & Anon Key)">
+                    <i class="fa fa-gear" style="color: var(--accent);"></i>
+                </button>
+                <!-- Back to Main Configurator Button -->
+                <a href="index.html" class="cart-icon-btn" title="Back to Configurator & Shop">
+                    <i class="fa fa-home"></i>
+                </a>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+        <div class="orders-page-container">
+            
+            <!-- Page Header Card -->
+            <div class="orders-header-card">
+                <div class="orders-hero-top">
+                    <div class="orders-title-block">
+                        <h1>Customer Orders Hub</h1>
+                        <p>Real-time order tracking, service bookings, and spare parts invoices stored in Supabase.</p>
+                    </div>
+                    <div class="action-btns-group">
+                        <button onclick="fetchOrdersFromSupabase()" class="btn-glass-action" title="Refresh data from database">
+                            <i class="fa fa-rotate-right"></i> Refresh
+                        </button>
+                        <a href="index.html#parts-section" class="btn-primary-action">
+                            <i class="fa fa-plus"></i> New Order
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Stats Summary Row -->
+                <div class="orders-stats-row">
+                    <div class="stat-box">
+                        <div class="stat-icon"><i class="fa fa-box-open"></i></div>
+                        <div>
+                            <div class="stat-val" id="stat-total-orders">0</div>
+                            <div class="stat-lbl">Total Orders</div>
+                        </div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-icon" style="background: rgba(16, 185, 129, 0.12); color: #10b981;"><i class="fa fa-indian-rupee-sign"></i></div>
+                        <div>
+                            <div class="stat-val" id="stat-total-revenue">₹0</div>
+                            <div class="stat-lbl">Revenue Tracked</div>
+                        </div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-icon" style="background: rgba(6, 182, 212, 0.12); color: #06b6d4;"><i class="fa fa-database"></i></div>
+                        <div>
+                            <div class="stat-val" id="stat-db-source">Supabase</div>
+                            <div class="stat-lbl">Database Engine</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Filter & Search Bar -->
+            <div class="orders-filter-bar">
+                <div class="search-box-wrapper">
+                    <i class="fa fa-search"></i>
+                    <input type="text" id="orders-search-input" placeholder="Search by Order ID, Rider Name, Phone, or Part..." oninput="handleSearchOrders()">
+                </div>
+            </div>
+
+            <!-- Orders Container Grid -->
+            <div id="orders-grid-container" class="orders-grid">
+                <!-- Loading State -->
+                <div class="empty-orders-card" style="border: none;">
+                    <i class="fa fa-spinner fa-spin" style="color: var(--accent);"></i>
+                    <h3>Loading Orders from Supabase...</h3>
+                    <p>Fetching latest invoices and booking details.</p>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer style="margin-top: 60px; padding: 30px 20px; border-top: 1px solid var(--border-glass); text-align: center; font-family: 'Space Grotesk', sans-serif; color: var(--text-muted); font-size: 0.8rem;">
+        <div>&copy; 2026 Velocity Motors India. Powered by Supabase Backend.</div>
+        <div style="margin-top: 6px;">
+            <a href="index.html" style="color: var(--accent); text-decoration: none; font-weight: 600;">Return to Main Configurator</a>
+        </div>
+    </footer>
+
+    <!-- Supabase SDK & Config Scripts -->
+    <script src="supabase-sdk.js"></script>
+    <script src="supabase.js"></script>
+
+    <!-- Orders Page Logic -->
+    <script>
+        let allFetchedOrders = [];
+
+        function getSupabaseClient() {
+            if (typeof supabase !== 'undefined' && supabase && typeof supabase.from === 'function') {
+                return supabase;
+            }
+            if (window.supabase && typeof window.supabase.from === 'function') {
+                return window.supabase;
+            }
+            return null;
+        }
+
+        async function updateStatusPill() {
+            const dot = document.getElementById('server-status-dot');
+            const text = document.getElementById('server-status-text');
+            if (!dot || !text) return;
+
+            try {
+                const client = getSupabaseClient();
+                if (!client) throw new Error("No client");
+                await client.from('orders').select('id', { count: 'exact', head: true });
+                
+                dot.style.background = '#10b981';
+                dot.style.boxShadow = '0 0 8px #10b981';
+                text.textContent = 'ONLINE';
+                text.style.color = '#10b981';
+            } catch (e) {
+                dot.style.background = '#ef4444';
+                dot.style.boxShadow = '0 0 8px #ef4444';
+                text.textContent = 'OFFLINE';
+                text.style.color = '#ef4444';
+            }
+        }
+
+        async function fetchOrdersFromSupabase() {
+            const grid = document.getElementById('orders-grid-container');
+            if (!grid) return;
+
+            grid.innerHTML = `
+                <div class="empty-orders-card" style="border: none;">
+                    <i class="fa fa-spinner fa-spin" style="color: var(--accent);"></i>
+                    <h3>Loading Orders...</h3>
+                    <p>Fetching latest invoices and booking details.</p>
+                </div>
+            `;
+
+            let supabaseOrders = [];
+            let localOrders = [];
+            
+            try {
+                localOrders = JSON.parse(localStorage.getItem('VELOCITY_LOCAL_ORDERS') || '[]');
+            } catch (e) {
+                console.warn("Could not read local orders:", e);
+            }
+
+            try {
+                const client = getSupabaseClient();
+                if (client) {
+                    const { data, error } = await client
+                        .from('orders')
+                        .select('*')
+                        .order('created_at', { ascending: false });
+
+                    if (!error && data) {
+                        supabaseOrders = data.map(row => {
+                            let center = 'Walk-in Hub';
+                            let apptDate = '';
+                            let apptTime = '';
+                            let payMethod = 'Online';
+                            let itemsList = ['Custom Bike Fitment'];
+
+                            if (row.address) {
+                                const parts = row.address.split(' | ');
+                                parts.forEach(p => {
+                                    if (p.startsWith('Center: ')) center = p.replace('Center: ', '');
+                                    else if (p.startsWith('Appt: ')) {
+                                        const apptInfo = p.replace('Appt: ', '');
+                                        const apptParts = apptInfo.split(' @ ');
+                                        apptDate = apptParts[0] || '';
+                                        apptTime = apptParts[1] || '';
+                                    } else if (p.startsWith('Pay: ')) {
+                                        payMethod = p.replace('Pay: ', '');
+                                    } else if (p.startsWith('Items: ')) {
+                                        const itemsStr = p.replace('Items: ', '');
+                                        itemsList = itemsStr.split(', ');
+                                    }
+                                });
+                            }
+
+                            return {
+                                id: `TXN-${row.id}`,
+                                date: new Date(row.created_at).toLocaleDateString('en-IN', {
+                                    year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
+                                }),
+                                customer_name: row.customer_name || 'Walk-in Rider',
+                                phone: row.phone || 'N/A',
+                                center: center,
+                                apptDate: apptDate,
+                                apptTime: apptTime,
+                                paymentMethod: payMethod,
+                                items: itemsList,
+                                total: row.total || 0,
+                                source: 'Supabase'
+                            };
+                        });
+                    }
+                }
+            } catch (err) {
+                console.warn("Supabase fetch note:", err);
+            }
+
+            // Convert local orders to uniform structure
+            const formattedLocal = localOrders.map(lo => ({
+                id: lo.id || 'TXN-LOCAL',
+                date: lo.date || new Date().toLocaleDateString('en-IN'),
+                customer_name: (lo.booking && lo.booking.rider) ? lo.booking.rider : 'Walk-in Customer',
+                phone: (lo.booking && lo.booking.phone) ? lo.booking.phone : 'N/A',
+                center: (lo.booking && lo.booking.center) ? lo.booking.center : 'Walk-in Hub',
+                apptDate: (lo.booking && lo.booking.date) ? lo.booking.date : '',
+                apptTime: (lo.booking && lo.booking.time) ? lo.booking.time : '',
+                paymentMethod: lo.paymentMethod || 'Online',
+                items: lo.items || ['Custom Spares'],
+                total: lo.total || 0,
+                source: 'Local Storage'
+            }));
+
+            // Deduplicate: preference to Supabase records if matched
+            const combined = [...supabaseOrders];
+            formattedLocal.forEach(lo => {
+                const match = combined.some(so => so.id === lo.id || (so.total === lo.total && so.customer_name === lo.customer_name));
+                if (!match) combined.push(lo);
+            });
+
+            allFetchedOrders = combined;
+            renderOrdersList(allFetchedOrders);
+            updateStats(allFetchedOrders);
+        }
+
+        function updateStats(orders) {
+            const countEl = document.getElementById('stat-total-orders');
+            const revEl = document.getElementById('stat-total-revenue');
+            
+            if (countEl) countEl.textContent = orders.length;
+            if (revEl) {
+                const totalRev = orders.reduce((sum, o) => sum + (Number(o.total) || 0), 0);
+                revEl.textContent = `₹${totalRev.toLocaleString('en-IN')}`;
+            }
+        }
+
+        function renderOrdersList(orders) {
+            const grid = document.getElementById('orders-grid-container');
+            if (!grid) return;
+
+            if (orders.length === 0) {
+                grid.innerHTML = `
+                    <div class="empty-orders-card">
+                        <i class="fa fa-box-open"></i>
+                        <h3>No Orders Found</h3>
+                        <p>There are no orders stored in your Supabase database yet.</p>
+                        <a href="index.html#parts-section" class="btn-primary-action" style="display:inline-flex;">
+                            <i class="fa fa-shopping-basket"></i> Browse Spares & Shop
+                        </a>
+                    </div>
+                `;
+                return;
+            }
+
+            grid.innerHTML = orders.map(order => `
+                <div class="order-card">
+                    <div>
+                        <div class="order-card-header">
+                            <div>
+                                <div class="order-txn-id">${order.id}</div>
+                                <div class="order-date"><i class="fa fa-clock" style="margin-right:4px;"></i>${order.date}</div>
+                            </div>
+                            <span class="order-status-badge">Synced · Live</span>
+                        </div>
+
+                        <div class="order-customer-info">
+                            <div class="info-row">
+                                <i class="fa fa-user"></i>
+                                <span><strong>${order.customer_name}</strong></span>
+                            </div>
+                            <div class="info-row">
+                                <i class="fa fa-phone"></i>
+                                <span>${order.phone}</span>
+                            </div>
+                            <div class="info-row">
+                                <i class="fa fa-location-dot"></i>
+                                <span>${order.center} ${order.apptDate ? `(${order.apptDate} ${order.apptTime})` : ''}</span>
+                            </div>
+                        </div>
+
+                        <div class="order-items-list">
+                            ${order.items.map(item => `<span class="item-pill"><i class="fa fa-check" style="color:var(--accent); font-size:0.65rem; margin-right:4px;"></i>${item}</span>`).join('')}
+                        </div>
+                    </div>
+
+                    <div class="order-card-footer">
+                        <div>
+                            <div style="font-size:0.68rem; color:var(--text-muted); font-family:'Space Grotesk',sans-serif;">TOTAL INVOICE</div>
+                            <div class="order-total-price">₹${Number(order.total).toLocaleString('en-IN')}</div>
+                        </div>
+                        <div class="payment-method-tag">
+                            <i class="fa fa-credit-card" style="margin-right:4px; color:var(--accent);"></i> ${order.paymentMethod}
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function handleSearchOrders() {
+            const query = (document.getElementById('orders-search-input')?.value || '').toLowerCase().trim();
+            if (!query) {
+                renderOrdersList(allFetchedOrders);
+                return;
+            }
+
+            const filtered = allFetchedOrders.filter(order => {
+                const matchId = order.id.toLowerCase().includes(query);
+                const matchName = order.customer_name.toLowerCase().includes(query);
+                const matchPhone = order.phone.toLowerCase().includes(query);
+                const matchCenter = order.center.toLowerCase().includes(query);
+                const matchItems = order.items.some(item => item.toLowerCase().includes(query));
+                return matchId || matchName || matchPhone || matchCenter || matchItems;
+            });
+
+            renderOrdersList(filtered);
+        }
+
+        // Initialize Page
+        document.addEventListener('DOMContentLoaded', () => {
+            updateStatusPill();
+            fetchOrdersFromSupabase();
+            setInterval(updateStatusPill, 15000);
+        });
+    </script>
+
+    <!-- ============================================ -->
+    <!-- SUPABASE CONFIGURATION SETTINGS MODAL        -->
+    <!-- ============================================ -->
+    <div id="supabase-settings-modal" style="display:none; position:fixed; inset:0; background:rgba(2,6,23,0.85); backdrop-filter:blur(10px); z-index:10000; align-items:center; justify-content:center; padding:20px;">
+        <div style="max-width:540px; width:100%; background:rgba(15,23,42,0.95); border:1px solid var(--border-glass); border-radius:20px; padding:28px; box-shadow:var(--shadow-premium); position:relative;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+                <div style="display:flex; align-items:center; gap:12px;">
+                    <div style="width:42px; height:42px; border-radius:12px; background:rgba(255,102,0,0.15); display:flex; align-items:center; justify-content:center; color:var(--accent); font-size:1.3rem;">
+                        <i class="fa fa-database"></i>
+                    </div>
+                    <div>
+                        <h3 style="font-family:'Outfit',sans-serif; font-size:1.3rem; font-weight:800; margin:0; color:#fff;">Supabase Credentials</h3>
+                        <p style="font-size:0.75rem; color:var(--text-muted); margin:0; font-family:'Space Grotesk',sans-serif;">Enter your Supabase URL & Anon Key directly on the site</p>
+                    </div>
+                </div>
+                <button onclick="closeSupabaseSettingsModal()" style="background:rgba(255,255,255,0.05); border:1px solid var(--border-glass); color:#fff; width:32px; height:32px; border-radius:50%; cursor:pointer;">✕</button>
+            </div>
+
+            <form onsubmit="handleSaveSupabaseConfig(event)">
+                <div style="margin-bottom:16px;">
+                    <label style="display:block; font-size:0.78rem; font-family:'Space Grotesk',sans-serif; color:var(--text-secondary); margin-bottom:6px; font-weight:600;">SUPABASE PROJECT URL</label>
+                    <input type="url" id="ui-supabase-url" placeholder="https://your-project.supabase.co" required style="width:100%; background:rgba(255,255,255,0.05); border:1px solid var(--border-glass); border-radius:10px; padding:12px 14px; color:#fff; font-family:'Space Grotesk',sans-serif; font-size:0.88rem; outline:none;">
+                </div>
+
+                <div style="margin-bottom:24px;">
+                    <label style="display:block; font-size:0.78rem; font-family:'Space Grotesk',sans-serif; color:var(--text-secondary); margin-bottom:6px; font-weight:600;">SUPABASE ANON KEY</label>
+                    <textarea id="ui-supabase-key" rows="4" placeholder="eyJhbGciOi..." required style="width:100%; background:rgba(255,255,255,0.05); border:1px solid var(--border-glass); border-radius:10px; padding:12px 14px; color:#fff; font-family:'Space Grotesk',sans-serif; font-size:0.82rem; outline:none; resize:none;"></textarea>
+                </div>
+
+                <div style="display:flex; justify-content:space-between; align-items:center; gap:10px;">
+                    <button type="button" onclick="resetSupabaseCredentialsFromUI()" style="background:rgba(239,68,68,0.15); border:1px solid rgba(239,68,68,0.3); color:#ef4444; padding:10px 16px; border-radius:10px; font-family:'Space Grotesk',sans-serif; font-size:0.82rem; font-weight:700; cursor:pointer;">Reset to Default</button>
+                    <div style="display:flex; gap:10px;">
+                        <button type="button" onclick="closeSupabaseSettingsModal()" style="background:rgba(255,255,255,0.05); border:1px solid var(--border-glass); color:#fff; padding:10px 16px; border-radius:10px; font-family:'Space Grotesk',sans-serif; font-size:0.82rem; cursor:pointer;">Cancel</button>
+                        <button type="submit" style="background:var(--accent); border:none; color:#fff; padding:10px 20px; border-radius:10px; font-family:'Outfit',sans-serif; font-size:0.88rem; font-weight:800; cursor:pointer; box-shadow:0 4px 14px var(--accent-glow);">Save & Connect</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function openSupabaseSettingsModal() {
+            const modal = document.getElementById('supabase-settings-modal');
+            if (!modal) return;
+            const creds = window.getActiveSupabaseCredentials ? window.getActiveSupabaseCredentials() : { url: '', key: '' };
+            document.getElementById('ui-supabase-url').value = creds.url;
+            document.getElementById('ui-supabase-key').value = creds.key;
+            modal.style.display = 'flex';
+        }
+        function closeSupabaseSettingsModal() {
+            const modal = document.getElementById('supabase-settings-modal');
+            if (modal) modal.style.display = 'none';
+        }
+        function handleSaveSupabaseConfig(e) {
+            e.preventDefault();
+            const url = document.getElementById('ui-supabase-url').value;
+            const key = document.getElementById('ui-supabase-key').value;
+            window.saveSupabaseCredentialsFromUI(url, key);
+        }
+    </script>
+</body>
+</html>
